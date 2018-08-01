@@ -65,6 +65,7 @@
                           <th>Jurusan</th>
                           <th>Nomor Telepon</th>
                           <th>E-mail</th>
+                          <th>Foto</th>
                           <th>Action</th>
                         </tr>
                       </thead>
@@ -102,11 +103,12 @@
                  <div class="modal-body">
                    <span id="form_output"></span>
 
-                   <form id="formsiswa" class="form-horizontal form-label-left input_mask" method="POST">
+                    {{-- {!! Form::open(['id' => 'formsiswa', 'files' => true]) !!} --}}
+                    <form id="formsiswa" class="form-horizontal form-label-left input_mask" enctype="multipart/form-data" method="POST">
                      <div class="col-md-offset-3 col-sm-6 col-xs-12">
                        <label class="col-md-2 col-sm-2 col-xs-12">NISN*</label>
                           <div class="col-md-10 col-sm-10 col-xs-12 form-group has-feedback">
-                            <input autofocus type="text" name="nisn" class="form-control" id="nisn" >
+                            <input autofocus placeholder="NISN" type="text" name="nisn" class="form-control" id="nisn" >
                           </div>
                       </div>
 
@@ -182,9 +184,9 @@
                            </div>
                        </div>
 
-                       <div class="col-md-4">
+                       <div class="col-md-4" >
                          <label class="control-label">Upload foto(jpg,png,jpeg | tidak wajib)</label>
-                           <input type="file" name="gambar">
+                           <input id="file" type="file" name="file"/>
                        </div>
 
                       {{-- <input type="hidden" name="id_kelas" value="1"> --}}

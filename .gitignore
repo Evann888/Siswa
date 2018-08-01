@@ -6,3 +6,5 @@ Homestead.json
 .env
 *.css
 *.css
+/app/Http/routes.php
+/public

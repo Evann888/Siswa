@@ -7,6 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
+    <link href="{{asset('library/animate.css/animate.min.css"')}}" rel="stylesheet">
     <!-- Bootstrap -->
     <link href="{{asset('library/bootstrap/dist/css/bootstrap.min.css')}}" rel="stylesheet">
     <!-- Font Awesome -->
@@ -25,13 +26,15 @@
     <link href="{{asset('library/starrr/dist/starrr.css')}}" rel="stylesheet">
     <!-- bootstrap-daterangepicker -->
     <link href="{{asset('library/bootstrap-daterangepicker/daterangepicker.css')}}" rel="stylesheet">
-
     <!-- Datatables -->
     <link href="{{asset('library/datatables.net-bs/css/dataTables.bootstrap.min.css')}}" rel="stylesheet">
     <link href="{{asset('library/datatables.net-buttons-bs/css/buttons.bootstrap.min.css')}}" rel="stylesheet">
     <link href="{{asset('library/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css')}}" rel="stylesheet">
     <link href="{{asset('library/datatables.net-responsive-bs/css/responsive.bootstrap.min.css')}}" rel="stylesheet">
     <link href="{{asset('library/datatables.net-scroller-bs/css/scroller.bootstrap.min.css')}}" rel="stylesheet">
+
+    {{--  https://github.com/danielm/uploader--}}
+    {{-- <link href="{{asset('library/fileuploader/src/css/jquery.dm-uploader.css')}}" rel="stylesheet"> --}}
 
     {{-- <link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet"> --}}
 
@@ -120,6 +123,7 @@
   <script src="{{asset('library/pdfmake/build/pdfmake.js')}}"></script>
   <script src="{{asset('library/pdfmake/build/vfs_fonts.js')}}"></script>
 
+  <script src="http://malsup.github.com/jquery.form.js"></script>
   <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
   <script type="text/javascript">
       $(document).ready(function(){
@@ -138,6 +142,7 @@
                   { "data": "jurusan" },
                   { "data": "phone" },
                   { "data": "email" },
+                  { "data": "foto" },
                   { "data": "action", orderable:false, searchable:false },
               ]
           });
@@ -150,7 +155,7 @@
 
           $('#tambah_data').click(function(){
               $('.modal').modal('show');
-              // $('#formsiswa')[0].reset();
+              $('#formsiswa')[0].reset();
               $('#form_output').html('');
               $('#button_action').val('insert');
               $('.modal-title').text('Add Data');
@@ -159,11 +164,22 @@
           $('#formsiswa').on('submit', function(event){
           event.preventDefault();
           var form_data = $(this).serialize();
+          // var form_data2 = new FormData($(this)[0]);
+          var form_data2 = new FormData();
+          // formData.append('file', $('#fotosiswa')[0].files[0]);
+
+          // var file_data = $("#userfile").prop("files")[0];
+          var form_data3 = new FormData();
+          form_data3.append("file", $( '#file' )[0].files[0]);
+
           $.ajax({
               url:"{{ route('siswa') }}",
               method:"POST",
-              data:form_data,
+              data:new FormData(this),
               dataType:"json",
+              processData: false,
+              contentType: false,
+              // enctype: 'multipart/form-data',
               success:function(data)
               {
                 // console.log(data);
@@ -200,7 +216,16 @@
                    alert(JSON.stringify(data));
                    console.log('Error:', data);
                }
-          })
+          }).done(function(data) {
+            // if (data.result === true) {
+            //     $("#form_output").html("<p>File Upload Succeeded</p>");
+            // } else {
+            //     $("#form_output").html("<p>File Upload Failed!</p>");
+            // }
+            // $("#form_output").append(data.message);
+        console.log("PHP Output:");
+        console.log( data );
+    });
           });
 
           $(document).on('click', '.edit', function(){
@@ -336,7 +361,6 @@
       // $('#dlt_data').click( function () {
       //     table.row('.selected').remove().draw( false );
       // } );
-
     });
 
   </script>

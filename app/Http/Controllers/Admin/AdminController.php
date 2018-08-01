@@ -39,7 +39,9 @@ class AdminController extends Controller
       return DataTables::of($siswa)->addColumn('action', function($siswaa){
                 return '<a href="#" class="btn btn-xs btn-primary edit" id="'.$siswaa->id_siswa.'"><i class="glyphicon glyphicon-edit"></i> Edit</a>
                         <a href="#" class="btn btn-xs btn-danger delete" id="'.$siswaa->id_siswa.'"><i class="glyphicon glyphicon-trash"></i> Hapus</a>';
-            })->make(true);
+            })->addColumn('foto', function($siswaa){
+                      return '<img src="'.$siswaa->image_path.'" alt="'.$siswaa->image_path.'" width="80px height="100px">';
+                  })->make(true);
     }
 
     function toSiswa() {
@@ -75,15 +77,17 @@ class AdminController extends Controller
        //     'updated_at' => \Carbon\Carbon::now()->toDateTimeString(),
        // ]);
 
-       //resorce/validation to custom message
+       //resorce/lang/en/validation to custom message
        $validation = Validator::make($request->all(), [
-           'nisn' => 'required|digits:10',
-           'fname' => 'required|max:20',
-           'lname'  => 'required|max:20',
-           'email' => 'required|max:20',
-           'phone'  => 'required|max:20',
-           'dob' => 'required|max:20',
-           'id_kelas'  => 'required',
+           // 'nisn' => 'required|digits:10',
+           // 'fname' => 'required|max:20',
+           // 'lname'  => 'required|max:20',
+           // 'email' => 'required|max:20',
+           // 'phone'  => 'required|max:20',
+           // 'dob' => 'required|max:20',
+           // 'id_kelas'  => 'required',
+           // 'foto_siswa'  => 'required',
+           'file' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
        ]);
 
       $error_array = array();
@@ -107,7 +111,20 @@ class AdminController extends Controller
              $email = $request->email;
              $phone = $request->phone;
              $id_kelas = $request->id_kelas;
-             
+             $image = $request->file('file');
+             $originalName = pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME);
+             $new_name = $originalName."_". rand() . '.' . $image->getClientOriginalExtension();
+             $image->move(public_path('images'), $new_name);
+              // $fileName = $_FILES['file']['name'];
+             // $imagePath = $image->getPathName();
+
+             if($request->hasFile('file')){
+               $success_output = '<div class="alert alert-success">Foto Inserted</div>';
+             } else{
+               $success_output = '<div class="alert alert-success">FGBLDK</div>';
+             }
+             // $path = $request->foto_siswa->store('foto_siswa');
+
              $add_product = DB::table("siswa")->insert([
                  'nisn' => $nisn,
                  'fname' => $fname,
@@ -116,10 +133,14 @@ class AdminController extends Controller
                  'dob' => $dob,
                  'email' => $email,
                  'phone' => $phone,
+                 'image_path' => "/images/$new_name",
                  'id_kelas' => $id_kelas,
                  'created_at' => \Carbon\Carbon::now()->toDateTimeString(),
                  'updated_at' => \Carbon\Carbon::now()->toDateTimeString(),
              ]);
+
+             // $success_output = '<div class="alert alert-success">Data Inserted</div>';
+
 
           // $student = new action([
           //     'fname' => $request->get('fname'),
@@ -129,7 +150,6 @@ class AdminController extends Controller
           //     'updated_at' => \Carbon\Carbon::now()->toDateTimeString()
           // ]);
           // $student->save();
-          $success_output = '<div class="alert alert-success">Data Inserted</div>';
         }
       }
 
@@ -152,10 +172,9 @@ class AdminController extends Controller
 
        $output = array(
           'error'     =>  $error_array,
-          'success'   =>  $success_output
+          'success'   =>  $success_output,
       );
       echo json_encode($output);
-
      // return $request;
     }
 
@@ -184,10 +203,10 @@ class AdminController extends Controller
         }
     }
 
-    function upload(Request $request)
-    {
-       $this->validate($request);
-    }
+    // function upload(Request $request)
+    // {
+    //    $this->validate($request);
+    // }
     // function liveReload()
     // {
     //   $siswa = action::

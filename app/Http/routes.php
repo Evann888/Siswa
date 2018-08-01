@@ -18,6 +18,8 @@ Route::get('evanz', 'Pagesredir@evan'); //jadi paggil method evan yg mengarahkan
 //evanz dibuka redirect ke route a(halaman about)
 
 Route::get('daftar_siswa', 'Siswa\SiswaController@index');
+Route::get('login', ['as' => 'login', 'uses' => 'LoginController@index']);
+Route::post('login', ['as' => 'login', 'uses' => 'LoginController@checkLogin']);
 
 Route::group(['prefix' => 'admin'], function () {
   Route::get('siswa', ['as' => 'siswa', 'uses' => 'Admin\AdminController@index']);
